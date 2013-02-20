@@ -10,6 +10,10 @@
  */
 public class Percolation {
 	
+	//###########################################################################
+	// =>	CONSTANTS
+	//###########################################################################
+	private final int VIRTUAL_SOURCE_INDEX = 0;
 	
 	
 	//###########################################################################
@@ -17,9 +21,10 @@ public class Percolation {
 	//###########################################################################
 	//represent an N x N grid as a single array
 	//we convert the 2-D array indices i, j to a single 1-D array index programatically
-	private int[] id;
 	private boolean[] open;
+	private WeightedQuickUnionUF id;
 	private int sideLength;
+	private int virtualSinkIndex;
 	
 	
 	
@@ -39,10 +44,16 @@ public class Percolation {
 		//we use a virtual top site to connect to each of the top row and a virtual bottom site to connect to each on the bottom row
 		//we then test whether the virtual top site connects with the virtual bottom site
 		this.sideLength = N;
-		this.id = new int[N * N + 2];
-		this.open = new boolean[N * N + 2];
-		for (int n = 0; n < this.id.length; n++) this.id[n] = n;
+		int totalSites = N * N + 2;
+		this.virtualSinkIndex = totalSites - 1;
+		this.open = new boolean[totalSites];
+		this.id = new WeightedQuickUnionUF(totalSites);
+	
+		for (int n = 0; n < this.open.length; n++) this.open[n] = false;
 		
+		//open the virtual sites
+		this.open[VIRTUAL_SOURCE_INDEX] = true;
+		this.open[this.open.length - 1] = true;
 	}
 	
 	
@@ -62,13 +73,57 @@ public class Percolation {
 		if(j < 1 || j > this.sideLength) throw new IndexOutOfBoundsException();
 		
 		int index = convert2DindexTo1D(i, j);
-		this.open[index] = true;
 		
 		//continue method, here is where we union find all adjacent values, provided they are open
 		//need to take care to programatically calculate what the adjacent values are, taking care of edges cases
+		//separate union find data structure class is to be used
+		//set the site to open
+		this.open[index] = true;
 		
+		
+		//connect horizontally, then vertically
+		
+		//connect site with vertical neighbors, two edge cases
+		if(i == 1) unionSiteBelowIfOpen(index);
+		else if(i == this.sideLength) unionSiteAboveIfOpen(index);
+		else{
+			unionSiteAboveIfOpen(index);
+			unionSiteBelowIfOpen(index);
+		}
+		
+		//connect site with horizontal neighbors, two edge cases
+		if(j == 1) unionSiteRightIfOpen(index);
+		else if(j == this.sideLength) unionSiteLeftIfOpen(index);
+		else{
+			unionSiteRightIfOpen(index);
+			unionSiteLeftIfOpen(index);
+		}
 	}
 	
+	
+	/**
+	 * determine whether the site at a given index is open or closed
+	 * @param i - the vertical index - 1 is the top most index
+	 * @param j - the horizontal index - 1 is the left most index
+	 * @return true if the site is open, false otherwise
+	 */
+	public boolean isOpen(int i, int j) {return this.open[convert2DindexTo1D(i, j)];}
+	
+	
+	/**
+	 * determine whether the site at a given index is full or empty
+	 * @param i - the vertical index - 1 is the top most index
+	 * @param j - the horizontal index - 1 is the left most index
+	 * @return true if the site is full, false otherwise
+	 */
+	public boolean isFull(int i, int j) {return this.id.connected(0, convert2DindexTo1D(i, j));}
+	
+	
+	/**
+	 * determines whether or not the system percolates
+	 * @return true if the system percolates, false otherwise
+	 */
+	public boolean percolates() {return this.id.connected(VIRTUAL_SOURCE_INDEX, this.virtualSinkIndex);}
 	
 	//###########################################################################
 	// =>	PRIVATE HELPERS
@@ -92,35 +147,25 @@ public class Percolation {
 	}
 	
 	
-	//###########################################################################
-	// =>	ANONYMOUS SITE CLASS
-	//###########################################################################
-	private class Site{
-		
-		//CONSTANTS
-		private final static boolean DEFAULT_OPEN = false;
-		
-		
-		//PROPERTIES
-		public int id;
-		public boolean open;
-		
-		
-		
-		//CONSTRUCTORS
-		//two parameter constructor
-		Site(int id, boolean isOpen){
-			this.id = id;
-			this.open = isOpen;
-		}
-		
-		//one parameter constructor
-		Site(int id){
-			this(id, DEFAULT_OPEN);
-		}
-		
-		
-	}//end Site
+	
+	private void unionSiteBelowIfOpen(int index){
+		if(this.open[index + this.sideLength]) this.id.union(index, index + this.sideLength);
+	}
+	
+	private void unionSiteAboveIfOpen(int index){
+		if(this.open[index - this.sideLength]) this.id.union(index, index - this.sideLength);
+	}
+	
+	private void unionSiteRightIfOpen(int index){
+		if(this.open[index + 1]) this.id.union(index, index + 1);
+	}
+	
+	private void unionSiteLeftIfOpen(int index){
+		if(this.open[index - 1]) this.id.union(index, index - 1);
+	}
+	
+	
+	
 	
 	
 }//end Percolation
