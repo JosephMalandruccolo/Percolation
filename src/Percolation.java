@@ -133,7 +133,7 @@ public class Percolation {
 		if(i < 1 || i > this.sideLength) throw new IndexOutOfBoundsException();
 		if(j < 1 || j > this.sideLength) throw new IndexOutOfBoundsException();
 		
-		return this.id.connected(0, convert2DindexTo1D(i, j));
+		return this.id.connected(VIRTUAL_SOURCE_INDEX, convert2DindexTo1D(i, j));
 	}
 	
 	
