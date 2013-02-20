@@ -37,7 +37,7 @@ public class Percolation {
 	 * initialized to false, by default
 	 * @param N
 	 */
-	Percolation(int N){
+	public Percolation(int N){
 		
 		//array initialized, each point in the array gets an id number
 		//initialize an N x N grid, plus a virtual top site and virtual bottom site
@@ -84,8 +84,14 @@ public class Percolation {
 		//connect vertically, then horizontally
 		
 		//connect site with vertical neighbors, two edge cases
-		if(i == 1) unionSiteBelowIfOpen(index);
-		else if(i == this.sideLength) unionSiteAboveIfOpen(index);
+		if(i == 1) {
+			unionWithSource(index);
+			unionSiteBelowIfOpen(index);
+		}
+		else if(i == this.sideLength) {
+			unionSiteAboveIfOpen(index);
+			unionWithSink(index);
+		}
 		else{
 			unionSiteAboveIfOpen(index);
 			unionSiteBelowIfOpen(index);
@@ -107,7 +113,13 @@ public class Percolation {
 	 * @param j - the horizontal index - 1 is the left most index
 	 * @return true if the site is open, false otherwise
 	 */
-	public boolean isOpen(int i, int j) {return this.open[convert2DindexTo1D(i, j)];}
+	public boolean isOpen(int i, int j) {
+		
+		if(i < 1 || i > this.sideLength) throw new IndexOutOfBoundsException();
+		if(j < 1 || j > this.sideLength) throw new IndexOutOfBoundsException();
+		
+		return this.open[convert2DindexTo1D(i, j)];
+	}
 	
 	
 	/**
@@ -116,7 +128,13 @@ public class Percolation {
 	 * @param j - the horizontal index - 1 is the left most index
 	 * @return true if the site is full, false otherwise
 	 */
-	public boolean isFull(int i, int j) {return this.id.connected(0, convert2DindexTo1D(i, j));}
+	public boolean isFull(int i, int j) {
+		
+		if(i < 1 || i > this.sideLength) throw new IndexOutOfBoundsException();
+		if(j < 1 || j > this.sideLength) throw new IndexOutOfBoundsException();
+		
+		return this.id.connected(0, convert2DindexTo1D(i, j));
+	}
 	
 	
 	/**
@@ -162,6 +180,14 @@ public class Percolation {
 	
 	private void unionSiteLeftIfOpen(int index){
 		if(this.open[index - 1]) this.id.union(index, index - 1);
+	}
+	
+	private void unionWithSource(int index){
+		this.id.union(VIRTUAL_SOURCE_INDEX, index);
+	}
+	
+	private void unionWithSink(int index){
+		this.id.union(this.open.length - 1, index);
 	}
 	
 

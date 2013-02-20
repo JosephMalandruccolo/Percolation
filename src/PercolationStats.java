@@ -27,7 +27,7 @@ public class PercolationStats {
 	 * @param N - the size of the N x N grid considered in this experiment
 	 * @param T - the number of independent computational experiments performed
 	 */
-	PercolationStats(int N, int T){
+	public PercolationStats(int N, int T){
 		
 		if(N <= 0 || T <=0) throw new IllegalArgumentException();
 		
@@ -53,7 +53,7 @@ public class PercolationStats {
 	public double mean() {return this.mean;}
 	public double stddev() {return this.stddev;}
 	public double confidenceLo() {return this.confidenceLo;}
-	public double confidenceHigh() {return this.confidenceHi;}
+	public double confidenceHi() {return this.confidenceHi;}
 	
 	
 	//###########################################################################
@@ -65,14 +65,15 @@ public class PercolationStats {
 		Percolation perc = new Percolation(n);
 		int openSites = 0;
 		
+		
 		int i;
 		int j;
 		while(!perc.percolates()){
-			i = StdRandom.uniform(n + 1);
-			j = StdRandom.uniform(n + 1);
+			i = StdRandom.uniform(n);
+			j = StdRandom.uniform(n);
 			
-			if(!perc.isOpen(i, j)) {
-				perc.open(i, j);
+			if(!perc.isOpen(i + 1, j + 1)) {
+				perc.open(i + 1, j + 1);
 				openSites++;
 			}//end if
 		}//end while
@@ -87,6 +88,8 @@ public class PercolationStats {
 	//###########################################################################
 	public static void main(String[] args){
 		
+		
+		
 		int firstArg = Integer.parseInt(args[0]);
 		int secondArg = Integer.parseInt(args[1]);
 		
@@ -95,6 +98,17 @@ public class PercolationStats {
 		StdOut.print(stats.mean());
 		StdOut.print(stats.stddev());
 		StdOut.printf("%f, %f", stats.confidenceLo, stats.confidenceHi);
+		
+		
+		
+		/*
+		PercolationStats stats = new PercolationStats(5, 2);
+		
+		StdOut.print(stats.mean());
+		StdOut.print(stats.stddev());
+		StdOut.printf("%f, %f", stats.confidenceLo, stats.confidenceHi);
+		*/
+		
 		
 	}
 	
