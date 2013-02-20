@@ -81,7 +81,7 @@ public class Percolation {
 		this.open[index] = true;
 		
 		
-		//connect horizontally, then vertically
+		//connect vertically, then horizontally
 		
 		//connect site with vertical neighbors, two edge cases
 		if(i == 1) unionSiteBelowIfOpen(index);
@@ -147,7 +147,7 @@ public class Percolation {
 	}
 	
 	
-	
+	//the set of helpers below programatically calculate the 1D index of the site above, below, left, or right, as indicated
 	private void unionSiteBelowIfOpen(int index){
 		if(this.open[index + this.sideLength]) this.id.union(index, index + this.sideLength);
 	}
@@ -164,8 +164,6 @@ public class Percolation {
 		if(this.open[index - 1]) this.id.union(index, index - 1);
 	}
 	
-	
-	
-	
+
 	
 }//end Percolation
