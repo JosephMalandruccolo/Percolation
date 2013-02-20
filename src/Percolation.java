@@ -92,4 +92,35 @@ public class Percolation {
 	}
 	
 	
-}//end class
+	//###########################################################################
+	// =>	ANONYMOUS SITE CLASS
+	//###########################################################################
+	private class Site{
+		
+		//CONSTANTS
+		private final static boolean DEFAULT_OPEN = false;
+		
+		
+		//PROPERTIES
+		public int id;
+		public boolean open;
+		
+		
+		
+		//CONSTRUCTORS
+		//two parameter constructor
+		Site(int id, boolean isOpen){
+			this.id = id;
+			this.open = isOpen;
+		}
+		
+		//one parameter constructor
+		Site(int id){
+			this(id, DEFAULT_OPEN);
+		}
+		
+		
+	}//end Site
+	
+	
+}//end Percolation
