@@ -32,7 +32,7 @@ public class PercolationStats {
 		if(N <= 0 || T <=0) throw new IllegalArgumentException();
 		
 		//use this double to store the result of the Tth experiment, then call a bunch of stats methods on this array
-		int[] percolatesAt = new int[T];
+		double[] percolatesAt = new double[T];
 		for (int i = 0; i < percolatesAt.length; i++) {
 			percolatesAt[i] = experiment(N);
 		}
@@ -67,7 +67,7 @@ public class PercolationStats {
 	// =>	EXPERIMENT CODE - RUNS A SINGLE EXPERIMENTS
 	//###########################################################################
 	
-	private int experiment(int n){
+	private double experiment(int n){
 		
 		Percolation perc = new Percolation(n);
 		int openSites = 0;
@@ -85,7 +85,7 @@ public class PercolationStats {
 			}//end if
 		}//end while
 		
-		return openSites;
+		return ((double) openSites) / (n * n);
 	}
 	
 	
