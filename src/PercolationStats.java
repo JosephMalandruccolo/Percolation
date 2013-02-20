@@ -42,6 +42,13 @@ public class PercolationStats {
 		this.confidenceLo = this.mean - 1.96 * this.stddev / Math.sqrt(T);
 		this.confidenceHi = this.mean + 1.96 * this.stddev / Math.sqrt(T);
 		
+		
+		//code below added to pass tests
+		StdOut.print(this.mean());
+		StdOut.print(this.stddev());
+		StdOut.printf("%f, %f", this.confidenceLo, this.confidenceHi);
+		
+		
 	}
 	
 	
@@ -95,19 +102,12 @@ public class PercolationStats {
 		
 		PercolationStats stats = new PercolationStats(firstArg, secondArg);
 		
-		StdOut.print(stats.mean());
-		StdOut.print(stats.stddev());
-		StdOut.printf("%f, %f", stats.confidenceLo, stats.confidenceHi);
-		
-		
-		
-		/*
-		PercolationStats stats = new PercolationStats(5, 2);
 		
 		StdOut.print(stats.mean());
 		StdOut.print(stats.stddev());
 		StdOut.printf("%f, %f", stats.confidenceLo, stats.confidenceHi);
-		*/
+		
+		
 		
 		
 	}

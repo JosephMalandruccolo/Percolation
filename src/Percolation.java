@@ -23,6 +23,7 @@ public class Percolation {
 	//we convert the 2-D array indices i, j to a single 1-D array index programatically
 	private boolean[] open;
 	private WeightedQuickUnionUF id;
+	private WeightedQuickUnionUF full;
 	private int sideLength;
 	private int virtualSinkIndex;
 	
@@ -48,6 +49,7 @@ public class Percolation {
 		this.virtualSinkIndex = totalSites - 1;
 		this.open = new boolean[totalSites];
 		this.id = new WeightedQuickUnionUF(totalSites);
+		this.full = new WeightedQuickUnionUF(totalSites - 1);
 	
 		for (int n = 0; n < this.open.length; n++) this.open[n] = false;
 		
@@ -133,7 +135,7 @@ public class Percolation {
 		if(i < 1 || i > this.sideLength) throw new IndexOutOfBoundsException();
 		if(j < 1 || j > this.sideLength) throw new IndexOutOfBoundsException();
 		
-		return this.id.connected(VIRTUAL_SOURCE_INDEX, convert2DindexTo1D(i, j));
+		return this.full.connected(VIRTUAL_SOURCE_INDEX, convert2DindexTo1D(i, j));
 	}
 	
 	
@@ -167,23 +169,36 @@ public class Percolation {
 	
 	//the set of helpers below programatically calculate the 1D index of the site above, below, left, or right, as indicated
 	private void unionSiteBelowIfOpen(int index){
-		if(this.open[index + this.sideLength]) this.id.union(index, index + this.sideLength);
+		if(this.open[index + this.sideLength]) {
+			this.id.union(index, index + this.sideLength);
+			this.full.union(index, index + this.sideLength);
+		}
 	}
 	
 	private void unionSiteAboveIfOpen(int index){
-		if(this.open[index - this.sideLength]) this.id.union(index, index - this.sideLength);
+		if(this.open[index - this.sideLength]) {
+			this.id.union(index, index - this.sideLength);
+			this.full.union(index, index - this.sideLength);
+		}
 	}
 	
 	private void unionSiteRightIfOpen(int index){
-		if(this.open[index + 1]) this.id.union(index, index + 1);
+		if(this.open[index + 1]) {
+			this.id.union(index, index + 1);
+			this.full.union(index, index + 1);
+		}
 	}
 	
 	private void unionSiteLeftIfOpen(int index){
-		if(this.open[index - 1]) this.id.union(index, index - 1);
+		if(this.open[index - 1]) {
+			this.id.union(index, index - 1);
+			this.full.union(index, index - 1);
+		}
 	}
 	
 	private void unionWithSource(int index){
 		this.id.union(VIRTUAL_SOURCE_INDEX, index);
+		this.full.union(VIRTUAL_SOURCE_INDEX, index);
 	}
 	
 	private void unionWithSink(int index){
