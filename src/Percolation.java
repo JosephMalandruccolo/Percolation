@@ -21,11 +21,11 @@ public class Percolation {
 	//###########################################################################
 	//represent an N x N grid as a single array
 	//we convert the 2-D array indices i, j to a single 1-D array index programatically
-	private boolean[] open;
-	private WeightedQuickUnionUF id;
-	private WeightedQuickUnionUF full;
-	private int sideLength;
-	private int virtualSinkIndex;
+	private boolean[] open;						//is the site at the index open
+	private WeightedQuickUnionUF id;			//structure used to determine whether we have percolated or not
+	private WeightedQuickUnionUF full;			//structure used to determine whether the site is full (solves the backwash problem)
+	private int sideLength;						//the public side length of the 2-D sites (ignores virtual source and sink)
+	private int virtualSinkIndex;				//the 1-D index of the virtual sink
 	
 	
 	
@@ -40,10 +40,10 @@ public class Percolation {
 	 */
 	public Percolation(int N){
 		
-		//array initialized, each point in the array gets an id number
 		//initialize an N x N grid, plus a virtual top site and virtual bottom site
 		//we use a virtual top site to connect to each of the top row and a virtual bottom site to connect to each on the bottom row
 		//we then test whether the virtual top site connects with the virtual bottom site
+		//a second data structure without a virtual bottom site is maintained to solve the backwash problem
 		this.sideLength = N;
 		int totalSites = N * N + 2;
 		this.virtualSinkIndex = totalSites - 1;
@@ -84,9 +84,14 @@ public class Percolation {
 		
 		
 		//connect vertically, then horizontally
+		//connect site with vertical neighbors, one edge case where sideLength == 1
+		if(i == 1 && j == 1 && this.sideLength == 1){
+			unionWithSink(index);
+			unionWithSource(index);
+		}
 		
-		//connect site with vertical neighbors, two edge cases
-		if(i == 1) {
+		//all other cases
+		else if(i == 1) {
 			unionWithSource(index);
 			unionSiteBelowIfOpen(index);
 		}
@@ -99,8 +104,9 @@ public class Percolation {
 			unionSiteBelowIfOpen(index);
 		}
 		
-		//connect site with horizontal neighbors, two edge cases
-		if(j == 1) unionSiteRightIfOpen(index);
+		//connect site with horizontal neighbors, one edge case where this.sideLength == 1
+		//unionSiteLeftIfOpen will union the node with the source, which is permissible
+		if(j == 1 && this.sideLength > 1) unionSiteRightIfOpen(index);
 		else if(j == this.sideLength) unionSiteLeftIfOpen(index);
 		else{
 			unionSiteRightIfOpen(index);
@@ -114,6 +120,7 @@ public class Percolation {
 	 * @param i - the vertical index - 1 is the top most index
 	 * @param j - the horizontal index - 1 is the left most index
 	 * @return true if the site is open, false otherwise
+	 * @throws indexOutOfBoundsException is i or j are out of range N x N
 	 */
 	public boolean isOpen(int i, int j) {
 		
@@ -129,6 +136,7 @@ public class Percolation {
 	 * @param i - the vertical index - 1 is the top most index
 	 * @param j - the horizontal index - 1 is the left most index
 	 * @return true if the site is full, false otherwise
+	 * @throws indexOutOfBoundsException is i or j are out of range N x N 
 	 */
 	public boolean isFull(int i, int j) {
 		

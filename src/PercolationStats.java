@@ -67,6 +67,12 @@ public class PercolationStats {
 	// =>	EXPERIMENT CODE - RUNS A SINGLE EXPERIMENTS
 	//###########################################################################
 	
+	/**
+	 * run an experiment to determine the number of randomly opened sites required
+	 * for the system to percolate
+	 * @param n - the side length of the N x N percolation
+	 * @return the percentage of open sites at the time of percolation
+	 */
 	private double experiment(int n){
 		
 		Percolation perc = new Percolation(n);
@@ -96,7 +102,6 @@ public class PercolationStats {
 	public static void main(String[] args){
 		
 		
-		
 		int firstArg = Integer.parseInt(args[0]);
 		int secondArg = Integer.parseInt(args[1]);
 		
@@ -107,10 +112,7 @@ public class PercolationStats {
 		StdOut.print(stats.stddev());
 		StdOut.printf("%f, %f", stats.confidenceLo, stats.confidenceHi);
 		
-		
-		
-		
-	}
+	}//end main
 	
 
 }//end PercolationStats
